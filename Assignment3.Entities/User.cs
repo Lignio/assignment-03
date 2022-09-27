@@ -1,6 +1,8 @@
 namespace Assignment3.Entities;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
+[Index(nameof(User.Email), IsUnique = true)]
 public class User
 {
     int Id {get; set;}
