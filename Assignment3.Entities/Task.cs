@@ -4,7 +4,7 @@ namespace Assignment3.Entities;
 
 public class Task
 {
-    public int Id;
+    public int Id {get; set;}
 
     [Required]
     [StringLength(50)]
@@ -14,9 +14,10 @@ public class Task
 
     [StringLength(100)]
     public string description {get; set;}
-    public enum State {New, Active, Resolved, Closed, Removed}
 
     [Required]
     public State state{get; set;}
     public IEnumerable<Tag> Tags;
 }
+
+public enum State {New, Active, Resolved, Closed, Removed}
