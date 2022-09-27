@@ -12,9 +12,8 @@ public class KanbanContext : DbContext
     public KanbanContext(DbContextOptions<KanbanContext> options) : base(options) {
 
     }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder){
-        modelBuilder.Entity<Task>().HasIndex();
+        modelBuilder.Entity<Task>().HasIndex(c=>c.Id).IsUnique();
         modelBuilder.Entity<Task>().Property(e => e.state).HasConversion(
             v => v.ToString(),
             v => (State)Enum.Parse(typeof(State), v));
