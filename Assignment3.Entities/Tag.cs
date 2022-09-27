@@ -10,6 +10,5 @@ public class Tag
     [Required]
     public String Name {get; set;}
 
-
     public virtual ICollection<Task> Tasks {get; set;}
 }
