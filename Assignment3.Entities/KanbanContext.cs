@@ -20,6 +20,7 @@ public class KanbanContext : DbContext
             v => (State)Enum.Parse(typeof(State), v));
         modelBuilder.Entity<User>().HasIndex(c => c.Email).IsUnique();  
         modelBuilder.Entity<Tag>().HasIndex(c=>c.Name).IsUnique();  
+        modelBuilder.Entity<Task>().HasMany<Tag>(t=>t.Tags).WithMany(t=>t.Tasks);
 
 
     }

@@ -21,7 +21,7 @@ public sealed class UserRepositoryTests : IDisposable
         context.Database.EnsureCreated();
         var user1 = new User("Oliver", "OllesEmail.dk") { Id = 1 };
         context.Users.AddRange(user1, new User("EMy-Chunnn", "coolKidzz@mail.ru") { Id = 2 });
-        context.Tasks.Add(new Task() {AssignedTo = user1, Title = "Do stuff", description = "...", state = Entities.State.Active});
+        context.Tasks.Add(new Task() {AssignedTo = user1, Title = "Do stuff", description = "...", state = State.Active});
         context.SaveChanges();
 
         _context = context;

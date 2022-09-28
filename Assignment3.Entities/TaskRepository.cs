@@ -15,18 +15,26 @@ public sealed class TaskRepository : ITaskRepository
 
         
           var entity = new Task();
-            entity.AssignedTo = (from u in _context.Users where u.Id == task.AssignedToId select u).FirstOrDefault();
-            task.AssignedTo;
+            entity.Title = task.Title;
+            if((from u in _context.Users where u.Id == task.AssignedToId select u).FirstOrDefault()==null){
+                response = Response.BadRequest;
+            }
+            else {
+                entity.AssignedTo = (from u in _context.Users where u.Id == task.AssignedToId select u).FirstOrDefault();
+            }
+
+            entity.description = task.Description;
+            entity.state = State.New;
+            //entity.Tags = task.Tags.ToList().Select(from t in _context.Tags where t.Name== task.Tags.ToList() select new TagDTO(t.Id, t.Name);
+            entity.Created = DateTime.UtcNow;
+            entity.StateUpdated = DateTime.UtcNow;
 
             _context.Tasks.Add(entity);
             _context.SaveChanges();
 
             response = Response.Created;
         
-        else {
-            response = Response.Conflict;
-        }
-
+    
         var created = new TaskDTO(entity.Id, entity.Title, entity.AssignedTo.Name, entity.Tags.Select(t=>t.Name).ToList().AsReadOnly(), entity.state);
         
         return (response, created.Id);
@@ -78,7 +86,7 @@ public sealed class TaskRepository : ITaskRepository
     public TaskDetailsDTO Read(int taskId) {
         var tasks = from t in _context.Tasks
                     where t.Id == taskId
-                    select new TaskDetailsDTO(t.Id, t.Title, t.AssignedTo.Name, t.state);
+                    select new TaskDetailsDTO(t.Id, t.Title, t.description, t.Created, t.AssignedTo.Name, t.Tags.Select(t=>t.Name).ToList().AsReadOnly(), t.state, t.StateUpdated);
         return tasks.FirstOrDefault();
     }
     public Response Update(TaskUpdateDTO task) {
@@ -89,13 +97,24 @@ public sealed class TaskRepository : ITaskRepository
         {
             response = Response.NotFound;
         }
-        else if (_context.Tasks.FirstOrDefault(c => c.Id != task.Id && c.Title == task.Title) != null)
+        else if (_context.Tasks.FirstOrDefault(c => c.Id != task.Id) != null)
         {
             response = Response.Conflict;
         }
         else
-        {   
+        {   entity.Id = task.Id;
+            entity.Title = task.Title;
+            if((from u in _context.Users where u.Id == task.AssignedToId select u).FirstOrDefault()==null){
+                response = Response.BadRequest;
+            }
+            else {
+                entity.AssignedTo = (from u in _context.Users where u.Id == task.AssignedToId select u).FirstOrDefault();
+            }
+            entity.description = task.Description;
             entity.state = task.State;
+            //entity.Tags = task.Tags;
+            entity.StateUpdated = DateTime.UtcNow;
+
             _context.SaveChanges();
             response = Response.Updated;
         }
