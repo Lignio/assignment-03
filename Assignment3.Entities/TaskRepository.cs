@@ -1,14 +1,23 @@
-namespace Assignment3.Entities;
 using Assignment3.Core;
+namespace Assignment3.Entities;
 
-public sealed class TaskRepository
+public class TaskRepository
 {   
-    public State Delete(int taskId)
-    {   State state;
+    private readonly KanbanContext _context;
 
+    public TaskRepository(KanbanContext context)
+    {
+        _context = context;
+    }
+
+
+    public Response Delete(int taskId)
+    {   State state;
+        Response response;
+        //Is this right?   
         if(state == State.New) 
         {
-            state = State.Deleted;
+            response = Response.Deleted;
         }
         else if(state == State.Active)
         {
@@ -16,8 +25,10 @@ public sealed class TaskRepository
         }
         else 
         {
-            return Conflict;
+            return Response.Conflict;
         }
+        //Not sure this is the right return
+        return Response.Conflict;
     }
 
     public (State, TaskDTO) Create(TaskCreateDTO task) 
