@@ -1,5 +1,5 @@
-namespace Assignment3.Entities;
 using Assignment3.Core;
+namespace Assignment3.Entities;
 
 public sealed class TaskRepository : ITaskRepository
 {   
