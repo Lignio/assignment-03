@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 [Index(nameof(User.Email), IsUnique = true)]
 public class User
 {
-    public int Id {get; set;}
+    public int? Id {get; set;}
     [Required]
     [StringLength(100)]
     public String Name {get; set;}

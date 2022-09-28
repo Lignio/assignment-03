@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Assignment3.Core;
 
 namespace Assignment3.Entities;
 
