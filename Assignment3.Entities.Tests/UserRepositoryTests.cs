@@ -15,7 +15,9 @@ public sealed class UserRepositoryTests : IDisposable
         builder.UseSqlite(connection);
         var context = new KanbanContext(builder.Options);
         context.Database.EnsureCreated();
-        context.Users.AddRange(new User("Oliver", "OllesEmail.dk") { Id = 1 }, new User("EMy-Chunnn", "coolKidzz@mail.ru") { Id = 2 });
+        var user1 = new User("Oliver", "OllesEmail.dk") { Id = 1 };
+        context.Users.AddRange(user1, new User("EMy-Chunnn", "coolKidzz@mail.ru") { Id = 2 });
+        context.Tasks.Add(new Task() {AssignedTo = user1, Title = "Do stuff", description = "...", state = Entities.State.Active});
         context.SaveChanges();
 
         _context = context;
@@ -54,6 +56,7 @@ public sealed class UserRepositoryTests : IDisposable
     [Fact]
     public void Update_given_non_existing_User_returns_NotFound() => _repository.Update(new UserUpdateDTO(42, "Andyboii", "lafu@4life")).Should().Be(Response.NotFound);
 
+    //Fix when method has been altered
     [Fact]
     public void Update_given_existing_name_returns_Conflict_and_does_not_update()
     {
@@ -66,7 +69,7 @@ public sealed class UserRepositoryTests : IDisposable
         entity.Name.Should().Be("EMy-Chunnn");
     }
     
-    
+    //Fix when method has been altered
     [Fact]
     public void Update_updates_and_returns_Updated()
     {
@@ -79,6 +82,31 @@ public sealed class UserRepositoryTests : IDisposable
         entity.Name.Should().Be("EMy-Chun");
     }
 
+    [Fact]
+    public void Delete_given_non_existing_Id_returns_NotFound() => _repository.Delete(42).Should().Be(Response.NotFound);
+
+    [Fact]
+    public void Delete_deletes_and_returns_Deleted()
+    {
+        var response = _repository.Delete(2);
+
+        response.Should().Be(Response.Deleted);
+
+        var entity = _context.Users.Find(2);
+
+        entity.Should().BeNull();
+    }
+
+    [Fact]
+    public void Delete_given_existing_User_with_Tasks_returns_Conflict_and_does_not_delete()
+    {
+        //Add task to user 4 this to work
+        var response = _repository.Delete(1);
+
+        response.Should().Be(Response.Conflict);
+
+        _context.Users.Find(1).Should().NotBeNull();
+    }
     
     public void Dispose()
     {

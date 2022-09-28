@@ -11,31 +11,31 @@ public class TaskRepository
     }
 
 
-    public Response Delete(int taskId)
-    {   State state;
-        Response response;
+    //public Response Delete(int taskId)
+    //{   State state;
+    //    Response response;
         //Is this right?   
-        if(state == State.New) 
-        {
-            response = Response.Deleted;
-        }
-        else if(state == State.Active)
-        {
-            state = State.Removed;
-        }
-        else 
-        {
-            return Response.Conflict;
-        }
+        //if(state == State.New) 
+        //{
+        //    response = Response.Deleted;
+        //}
+        //else if(state == State.Active)
+        //{
+        //    state = State.Removed;
+        //}
+        //else 
+        //{
+        //    return Response.Conflict;
+        //}
         //Not sure this is the right return
-        return Response.Conflict;
-    }
+        //return Response.Conflict;
+    //}
 
-    public (State, TaskDTO) Create(TaskCreateDTO task) 
-    {
-        State state;
-        state = State.New;
-    }
+    //public (State, TaskDTO) Create(TaskCreateDTO task) 
+    //{
+    //    State state;
+    //    state = State.New;
+    //}
 
-    public 
+    //public 
 }
