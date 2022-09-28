@@ -3,8 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 public class Tag
 {
-    [Index(nameof(Tag.Name), IsUnique = true)]
-    int id {get; set;}
+    public int Id {get; set;}
     
     [StringLength(50)]
     [Required]
