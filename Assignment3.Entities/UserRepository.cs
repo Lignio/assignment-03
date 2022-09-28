@@ -10,14 +10,79 @@ public sealed class UserRepository : IUserRepository
         _context = context;
     }
 
-    (Response Response, int UserId) Create(UserCreateDTO user) {
-        var entity = _context.Users.
-        
-        //return (status, created);
-    }
-    IReadOnlyCollection<UserDTO> ReadAll();
-    UserDTO Read(int userId);
-    Response Update(UserUpdateDTO user);
-    Response Delete(int userId, bool force = false);
+    public (Response Response, int UserId) Create(UserCreateDTO user) {
+        //var entity = _context.Users.FirstOrDefault(u => u.Name == user.Name && u.Email == user.Email);
+        var entity = _context.Users.FirstOrDefault(u => u.Email == user.Email);
+        Response response;
 
+        if (entity is null){
+            entity = new User(user.Name, user.Email);
+
+            _context.Users.Add(entity);
+            _context.SaveChanges();
+
+            response = Response.Created;
+        }
+        else {
+            response = Response.Conflict;
+        }
+
+        var created = new UserDTO(entity.Id, entity.Name, entity.Email);
+        
+        return (response, created.Id);
+    }
+
+    public IReadOnlyCollection<UserDTO> ReadAll(){
+        var users = from u in _context.Users
+                    orderby u.Name
+                    select new UserDTO(u.Id, u.Name, u.Email);
+
+        return users.ToArray();            
+    }
+
+    public UserDTO Read(int userId){
+        var users = from u in _context.Users
+                    where u.Id == userId
+                    select new UserDTO(u.Id, u.Name, u.Email);
+        return users.FirstOrDefault();
+    }
+    public Response Update(UserUpdateDTO user){
+        var entity = _context.Users.Find(user.Id);
+        Response response;
+
+        if (entity is null)
+        {
+            response = Response.NotFound;
+        }
+        else if (_context.Users.FirstOrDefault(c => c.Id != user.Id && c.Name == user.Name) != null)
+        {
+            response = Response.Conflict;
+        }
+        else
+        {
+            entity.Name = user.Name;
+            _context.SaveChanges();
+            response = Response.Updated;
+        }
+
+        return response;
+    }
+    public Response Delete(int userId, bool force = false){
+        //var user = _context.Users.Include(u => u.Users).FirstOrDefault(u => u.Id == userId);
+        var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+        Response response;
+
+        if (user is null){
+            response = Response.NotFound;
+        }
+        else if (user.Tasks.Any() && force == false){
+            response = Response.Conflict;
+        }
+        else {
+            _context.Users.Remove(user);
+            _context.SaveChanges();
+            response = Response.Deleted;
+        }
+        return response;
+    }
 }

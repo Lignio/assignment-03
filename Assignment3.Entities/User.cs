@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 [Index(nameof(User.Email), IsUnique = true)]
 public class User
 {
-    int Id {get; set;}
+    public int Id {get; set;}
     [Required]
     [StringLength(100)]
     public String Name {get; set;}
@@ -13,4 +13,10 @@ public class User
     [StringLength(100)]
     public String Email {get; set;}
     public virtual IEnumerable<Task> Tasks { get; set; }
+
+    public User(string name, string email){
+        Tasks = new List<Task>();
+        Name = name;
+        Email = email;
+    }
 }
