@@ -37,14 +37,24 @@ public sealed class UserRepository : IUserRepository
                     orderby u.Name
                     select new UserDTO(u.Id, u.Name, u.Email);
 
-        return users.ToArray();            
+        if (users.Any()){
+            return users.ToArray()!;
+        }
+        else {
+            return null!;
+        }          
     }
 
     public UserDTO Read(int userId){
         var users = from u in _context.Users
                     where u.Id == userId
                     select new UserDTO(u.Id, u.Name, u.Email);
-        return users.FirstOrDefault();
+        if (users.Any()){
+            return users.FirstOrDefault()!;
+        }
+        else {
+            return null!;
+        }
     }
     public Response Update(UserUpdateDTO user){
         var entity = _context.Users.Find(user.Id);
