@@ -25,7 +25,9 @@ public sealed class TaskRepository : ITaskRepository
 
             entity.description = task.Description;
             entity.state = State.New;
-            //entity.Tags = task.Tags.ToList().Select(from t in _context.Tags where t.Name== task.Tags.ToList() select new TagDTO(t.Id, t.Name);
+            foreach (string s in task.Tags){
+                entity.Tags.Add((from t in _context.Tags where t.Name== s select t).FirstOrDefault());
+            }
             entity.Created = DateTime.UtcNow;
             entity.StateUpdated = DateTime.UtcNow;
 
@@ -112,7 +114,9 @@ public sealed class TaskRepository : ITaskRepository
             }
             entity.description = task.Description;
             entity.state = task.State;
-            //entity.Tags = task.Tags;
+            foreach (string s in task.Tags){
+                entity.Tags.Add((from t in _context.Tags where t.Name== s select t).FirstOrDefault());
+            }
             entity.StateUpdated = DateTime.UtcNow;
 
             _context.SaveChanges();
