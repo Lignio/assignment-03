@@ -56,7 +56,7 @@ public sealed class UserRepository : IUserRepository
             return null!;
         }
     }
-    //TODO fix so it makes sure email is unique and names can be the same. Also that it updates email as well
+    
     public Response Update(UserUpdateDTO user){
         var entity = _context.Users.Find(user.Id);
         Response response;
