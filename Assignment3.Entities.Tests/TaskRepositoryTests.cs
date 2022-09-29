@@ -104,5 +104,7 @@ public class TaskRepositoryTests
     [Fact]
     public void Assigning_User_Which_Does_Not_Exist_Returns_BadRequest() 
     {
+        var response = _repository.Update(new TaskUpdateDTO(1, "Procrastinating", 2, "Doing everything and nothing", tag1, State.Active));
+        response.Should().Be(Response.BadRequest);
     }
 }
