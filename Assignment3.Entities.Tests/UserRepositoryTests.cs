@@ -62,20 +62,19 @@ public sealed class UserRepositoryTests : IDisposable
 
     //Fix when method has been altered
     [Fact]
-    public void Update_given_existing_name_returns_Conflict_and_does_not_update()
+    public void Update_given_existing_Email_returns_Conflict_and_does_not_update()
     {
-        var response = _repository.Update(new UserUpdateDTO(2, "Oliver", "coolKidzz@mail.ru"));
+        var response = _repository.Update(new UserUpdateDTO(2, "EMy-Chunnn", "OllesEmail.dk"));
 
         response.Should().Be(Response.Conflict);
 
         var entity = _context.Users.Find(2)!;
 
-        entity.Name.Should().Be("EMy-Chunnn");
+        entity.Email.Should().Be("coolKidzz@mail.ru");
     }
     
-    //Fix when method has been altered
     [Fact]
-    public void Update_updates_and_returns_Updated()
+    public void Update_updates_Name_and_returns_Updated()
     {
         var response = _repository.Update(new UserUpdateDTO(2, "EMy-Chun", "coolKidzz@mail.ru"));
 
@@ -84,6 +83,18 @@ public sealed class UserRepositoryTests : IDisposable
         var entity = _context.Users.Find(2)!;
 
         entity.Name.Should().Be("EMy-Chun");
+    }
+
+    [Fact]
+    public void Update_updates_Email_and_returns_Updated()
+    {
+        var response = _repository.Update(new UserUpdateDTO(2, "EMy-Chunnn", "coolKidzz@gmail.com"));
+
+        response.Should().Be(Response.Updated);
+
+        var entity = _context.Users.Find(2)!;
+
+        entity.Email.Should().Be("coolKidzz@gmail.com");
     }
 
     [Fact]
@@ -104,7 +115,6 @@ public sealed class UserRepositoryTests : IDisposable
     [Fact]
     public void Delete_given_existing_User_with_Tasks_returns_Conflict_and_does_not_delete()
     {
-        //Add task to user 4 this to work
         var response = _repository.Delete(1);
 
         response.Should().Be(Response.Conflict);
