@@ -65,13 +65,14 @@ public sealed class UserRepository : IUserRepository
         {
             response = Response.NotFound;
         }
-        else if (_context.Users.FirstOrDefault(c => c.Id != user.Id && c.Name == user.Name) != null)
+        else if (_context.Users.FirstOrDefault(c => c.Id != user.Id && c.Email == user.Email) != null)
         {
             response = Response.Conflict;
         }
         else
         {
             entity.Name = user.Name;
+            entity.Email = user.Email;
             _context.SaveChanges();
             response = Response.Updated;
         }
