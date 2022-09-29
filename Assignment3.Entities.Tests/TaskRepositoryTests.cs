@@ -8,6 +8,7 @@ public class TaskRepositoryTests
 {   
     private readonly KanbanContext _context;
     private readonly TaskRepository _repository;
+    private readonly TagRepository _tagRepository;
 
     public TaskRepositoryTests()
     {
@@ -84,19 +85,25 @@ public class TaskRepositoryTests
     public void Create_Task_Will_Set_State_New() 
     {
         //TODO Insert a Tag så create can do its thing
-        var task = _repository.Create(new TaskCreateDTO("Procrastinating", 1, "Doing everything and nothing", ));
+        var task = _repository.Create(new TaskCreateDTO("Procrastinating", 1, "Doing everything and nothing"));
         task.TaskId = 2;
         var entity = _context.Tasks.Find(2);
         entity.state.Should().Be(State.New);
     }
-
+    
     [Fact]
     public void Updating_State_Of_Task_Will_Change_Current_Time() 
     {
-        var tag1 = new Tag() { Id = 1, Name = "Tag1" };
-        var response = _repository.Update(new TaskUpdateDTO("Procrastinating", 1, "Doing everything and nothing", tag1));
-        var actual = DateTime.UtcNow.AddSeconds(2);
-
+        var response = _repository.Update(new TaskUpdateDTO(1, "Procrastinating", 1, "Doing everything and nothing", tag1, State.Active));
+        var entity = _context.Tasks.Find(1);
+        var actual = entity.stateUpdated;
+        
+        var expected = DateTime.UtcNow;
         actual.Should().BeCloseTo(expected, precision: TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public void Assigning_User_Which_Does_Not_Exist_Returns_BadRequest() 
+    {
     }
 }
