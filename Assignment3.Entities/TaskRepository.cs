@@ -46,7 +46,12 @@ public sealed class TaskRepository : ITaskRepository
                     orderby t.Title
                     select new TaskDTO(t.Id, t.Title, t.AssignedTo.Name, t.Tags.Select(t=>t.Name).ToList().AsReadOnly(), t.state);
 
-        return tasks.ToArray();   
+        if (tasks.Any()){
+            return tasks.ToArray()!;
+        }
+        else {
+            return null!;
+        }     
 
     }
     public IReadOnlyCollection<TaskDTO> ReadAllRemoved() {
@@ -55,7 +60,12 @@ public sealed class TaskRepository : ITaskRepository
                     where t.state == State.Removed
                     select new TaskDTO(t.Id, t.Title, t.AssignedTo.Name, t.Tags.Select(t=>t.Name).ToList().AsReadOnly(), t.state);
 
-        return tasks.ToArray();  
+        if (tasks.Any()){
+            return tasks.ToArray()!;
+        }
+        else {
+            return null!;
+        }    
 
     }
     public IReadOnlyCollection<TaskDTO> ReadAllByTag(string tag) {
@@ -64,7 +74,12 @@ public sealed class TaskRepository : ITaskRepository
                     where t.Tags.Select(t=>t.Name).ToList().AsReadOnly().Contains(tag)
                     select new TaskDTO(t.Id, t.Title, t.AssignedTo.Name, t.Tags.Select(t=>t.Name).ToList().AsReadOnly(), t.state);
 
-        return tasks.ToArray();  
+         if (tasks.Any()){
+            return tasks.ToArray()!;
+        }
+        else {
+            return null!;
+        }    
 
     }
     public IReadOnlyCollection<TaskDTO> ReadAllByUser(int userId) {
@@ -73,7 +88,12 @@ public sealed class TaskRepository : ITaskRepository
                     where t.AssignedTo.Id == userId 
                     select new TaskDTO(t.Id, t.Title, t.AssignedTo.Name, t.Tags.Select(t=>t.Name).ToList().AsReadOnly(), t.state);
 
-        return tasks.ToArray();  
+         if (tasks.Any()){
+            return tasks.ToArray()!;
+        }
+        else {
+            return null!;
+        }  
 
     }
     public IReadOnlyCollection<TaskDTO> ReadAllByState(State state) {
@@ -82,14 +102,24 @@ public sealed class TaskRepository : ITaskRepository
                     where t.state == state 
                     select new TaskDTO(t.Id, t.Title, t.AssignedTo.Name, t.Tags.Select(t=>t.Name).ToList().AsReadOnly(), t.state);
 
-        return tasks.ToArray();  
+         if (tasks.Any()){
+            return tasks.ToArray()!;
+        }
+        else {
+            return null!;
+        }  
 
     }
     public TaskDetailsDTO Read(int taskId) {
         var tasks = from t in _context.Tasks
                     where t.Id == taskId
                     select new TaskDetailsDTO(t.Id, t.Title, t.description, t.Created, t.AssignedTo.Name, t.Tags.Select(t=>t.Name).ToList().AsReadOnly(), t.state, t.StateUpdated);
-        return tasks.FirstOrDefault();
+         if (tasks.Any()){
+            return tasks.FirstOrDefault()!;
+        }
+        else {
+            return null!;
+        }
     }
     public Response Update(TaskUpdateDTO task) {
          var entity = _context.Tasks.Find(task.Id);

@@ -38,14 +38,24 @@ public class TagRepository : ITagRepository
                     orderby t.Name
                     select new TagDTO(t.Id, t.Name);
 
-        return tags.ToArray();            
+        if (tags.Any()){
+            return tags.ToArray()!;
+        }
+        else {
+            return null!;
+        }           
     }
 
     public TagDTO Read(int tagId){
         var tags = from t in _context.Tags
                     where t.Id == tagId
                     select new TagDTO(t.Id, t.Name);
-        return tags.FirstOrDefault();
+        if (tags.Any()){
+            return tags.FirstOrDefault()!;
+        }
+        else {
+            return null!;
+        }
     }
     public Response Update(TagUpdateDTO tag){
         var entity = _context.Tags.Find(tag.Id);
