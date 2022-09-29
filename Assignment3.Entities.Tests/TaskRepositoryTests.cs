@@ -9,6 +9,8 @@ public class TaskRepositoryTests
     private readonly KanbanContext _context;
     private readonly TaskRepository _repository;
 
+     Tag tag1 = new Tag{Id=1, Name="Test"};
+
     public TaskRepositoryTests()
     {
         
@@ -83,22 +85,36 @@ public class TaskRepositoryTests
     [Fact]
     public void Create_Task_Will_Set_State_New() 
     {
-        //TODO Insert a Tag så create can do its thing
-        var task = _repository.Create(new TaskCreateDTO("Procrastinating", 1, "Doing everything and nothing"));
+        string[] collect = new string[1]{tag1.Name};
+        var task = _repository.Create(new TaskCreateDTO("Procrastinating", 1, "Doing everything and nothing", collect));
         task.TaskId = 2;
         var entity = _context.Tasks.Find(2);
         entity.state.Should().Be(State.New);
     }
+
+    [Fact]
+    public void Create_Task_Will_Create_Task() 
+    {
+        string[] collect = new string[1]{tag1.Name};
+        var (response, created) = _repository.Create(new TaskCreateDTO("Procrastinating", 1, "Doing everything and nothing", collect));
+        response.Should().Be(Response.Created);
+        created.Should().Be(1);
+
+        var task = _repository.Create(new TaskCreateDTO("Procrastinating", 1, "Doing everything and nothing", collect));
+        task.TaskId = 2;
+        var entity = _context.Tasks.Find(2);
+        entity.state.Should().Be(State.New);
+    }
+
     
     [Fact]
     public void Updating_State_Of_Task_Will_Change_Current_Time() 
-    {
-        var response = _repository.Update(new TaskUpdateDTO(1, "Procrastinating", 1, "Doing everything and nothing", tag1, State.Active));
+    {   string[] collect = new string[1]{tag1.Name};
+        var response = _repository.Update(new TaskUpdateDTO(1, "Procrastinating", 1, "Doing everything and nothing", collect, State.Active));
         var entity = _context.Tasks.Find(1);
-        var actual = entity.stateUpdated;
         
         var expected = DateTime.UtcNow;
-        actual.Should().BeCloseTo(expected, precision: TimeSpan.FromSeconds(5));
+        entity.StateUpdated.Should().BeCloseTo(expected, precision: TimeSpan.FromSeconds(5));
     }
 
     [Fact]
