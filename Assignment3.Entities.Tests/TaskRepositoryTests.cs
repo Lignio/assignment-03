@@ -22,6 +22,7 @@ public class TaskRepositoryTests
         var user1 = new User("Oliver", "OllesEmail.dk") { Id = 1 };
         context.Tasks.Add(new Task() {AssignedTo = user1, Title = "Do stuff", description = "...", state = State.New, Id = 1});
         context.Tags.Add(new Tag{Id=1, Name="Test"});
+        context.Tags.Add(new Tag{Id=2, Name="Test2"});
         context.SaveChanges();
 
         _context = context;
@@ -89,7 +90,22 @@ public class TaskRepositoryTests
         var task = _repository.Create(new TaskCreateDTO("Procrastinating", 1, "Doing everything and nothing", collect));
         var entity = _context.Tasks.Find(1);
         entity.state.Should().Be(State.New);
+    
     }
+
+    [Fact]
+    public void Create_Task_Will_Set_Created_To_Now() 
+    {
+        
+        var task = _repository.Create(new TaskCreateDTO("Procrastinating", 1, "Doing everything and nothing", new List<string>{"Test"}));
+        var entity = _context.Tasks.Find(1);
+        var expected = DateTime.UtcNow;
+        entity.Created.Should().BeCloseTo(expected, precision: TimeSpan.FromSeconds(5));
+    
+    
+    }
+
+
 
     [Fact]
     public void Create_Task_Will_Create_Task() 
@@ -99,23 +115,30 @@ public class TaskRepositoryTests
         response.Should().Be(Response.Created);
         created.Should().Be(2);
 
-        /*var task = _repository.Create(new TaskCreateDTO("Procrastinating", 1, "Doing everything and nothing", collect));
-        task.TaskId = 2;
-        var entity = _context.Tasks.Find(2);
-        entity.state.Should().Be(State.New);*/
+
     }
 
     
     [Fact]
     public void Updating_State_Of_Task_Will_Change_Current_Time() 
     {   
-        //string[] collect = new string[1]{"Test"};
+    
         var response = _repository.Update(new TaskUpdateDTO(1, "Procrastinating", 1, "Doing everything and nothing", new List<string>{"Test"}, State.Active));
         var entity = _context.Tasks.Find(1);
-        
         var expected = DateTime.UtcNow;
         entity.StateUpdated.Should().BeCloseTo(expected, precision: TimeSpan.FromSeconds(5));
     }
+
+    [Fact]
+    public void Updating_Task_Edit_Tags() 
+    {   
+    
+        var response = _repository.Update(new TaskUpdateDTO(1, "Procrastinating", 1, "Doing everything and nothing", new List<string>{"Test", "Test2"}, State.Active));
+        var entity = _context.Tasks.Find(1);
+        entity.Tags.Should().BeEquivalentTo(new[]{new TagDTO(1, "Test"), new TagDTO(2, "Test2")});
+    }
+
+
 
     [Fact]
     public void Assigning_User_Which_Does_Not_Exist_Returns_BadRequest() 
