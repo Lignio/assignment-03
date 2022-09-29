@@ -9,7 +9,6 @@ public class TaskRepositoryTests
     private readonly KanbanContext _context;
     private readonly TaskRepository _repository;
 
-     Tag tag1 = new Tag{Id=1, Name="Test"};
 
     public TaskRepositoryTests()
     {
@@ -22,6 +21,7 @@ public class TaskRepositoryTests
         context.Database.EnsureCreated();
         var user1 = new User("Oliver", "OllesEmail.dk") { Id = 1 };
         context.Tasks.Add(new Task() {AssignedTo = user1, Title = "Do stuff", description = "...", state = State.New, Id = 1});
+        context.Tags.Add(new Tag{Id=1, Name="Test"});
         context.SaveChanges();
 
         _context = context;
@@ -85,7 +85,7 @@ public class TaskRepositoryTests
     [Fact]
     public void Create_Task_Will_Set_State_New() 
     {
-        string[] collect = new string[1]{tag1.Name};
+        string[] collect = new string[1]{"Test"};
         var task = _repository.Create(new TaskCreateDTO("Procrastinating", 1, "Doing everything and nothing", collect));
         var entity = _context.Tasks.Find(1);
         entity.state.Should().Be(State.New);
@@ -94,10 +94,10 @@ public class TaskRepositoryTests
     [Fact]
     public void Create_Task_Will_Create_Task() 
     {
-        string[] collect = new string[1]{tag1.Name};
+        string[] collect = new string[1]{"Test"};
         var (response, created) = _repository.Create(new TaskCreateDTO("Procrastinating", 1, "Doing everything and nothing", collect));
         response.Should().Be(Response.Created);
-        created.Should().Be(0);
+        created.Should().Be(2);
 
         /*var task = _repository.Create(new TaskCreateDTO("Procrastinating", 1, "Doing everything and nothing", collect));
         task.TaskId = 2;
@@ -108,8 +108,9 @@ public class TaskRepositoryTests
     
     [Fact]
     public void Updating_State_Of_Task_Will_Change_Current_Time() 
-    {   string[] collect = new string[1]{tag1.Name};
-        var response = _repository.Update(new TaskUpdateDTO(1, "Procrastinating", 1, "Doing everything and nothing", collect, State.Active));
+    {   
+        //string[] collect = new string[1]{"Test"};
+        var response = _repository.Update(new TaskUpdateDTO(1, "Procrastinating", 1, "Doing everything and nothing", new List<string>{"Test"}, State.Active));
         var entity = _context.Tasks.Find(1);
         
         var expected = DateTime.UtcNow;
@@ -118,7 +119,7 @@ public class TaskRepositoryTests
 
     [Fact]
     public void Assigning_User_Which_Does_Not_Exist_Returns_BadRequest() 
-    {   string[] collect = new string[1]{tag1.Name};
+    {   string[] collect = new string[1]{"Test"};
         var response = _repository.Update(new TaskUpdateDTO(1, "Procrastinating", 5, "Doing everything and nothing", collect, State.Active));
         response.Should().Be(Response.BadRequest);
     }

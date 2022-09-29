@@ -16,28 +16,28 @@ public sealed class TaskRepository : ITaskRepository
         
           var entity = new Task();
             entity.Title = task.Title;
+            entity.description = task.Description!;
+            entity.state = State.New;
+            var tagList = new List<Tag>();
+            foreach (string s in task.Tags){
+                if((from t in _context.Tags where t.Name== s select t).FirstOrDefault()!= null){
+                    tagList.Add((from t in _context.Tags where t.Name== s select t).FirstOrDefault()!);
+                }
+            }
+            entity.Tags = tagList;
+            entity.Created = DateTime.UtcNow;
+            entity.StateUpdated = DateTime.UtcNow;
+
+
             if((from u in _context.Users where u.Id == task.AssignedToId select u).FirstOrDefault()==null){
                 response = Response.BadRequest;
             }
             else {
                 entity.AssignedTo = (from u in _context.Users where u.Id == task.AssignedToId select u).FirstOrDefault()!;
+                 response = Response.Created;
             }
-
-            entity.description = task.Description!;
-            entity.state = State.New;
-            foreach (string s in task.Tags){
-                if((from t in _context.Tags where t.Name== s select t).FirstOrDefault()!= null){
-                    entity.Tags.Add((from t in _context.Tags where t.Name== s select t).FirstOrDefault()!);
-                }
-            }
-            entity.Created = DateTime.UtcNow;
-            entity.StateUpdated = DateTime.UtcNow;
-
             _context.Tasks.Add(entity);
             _context.SaveChanges();
-
-            response = Response.Created;
-        
     
         var created = new TaskDTO(entity.Id, entity.Title, entity.AssignedTo.Name, entity.Tags.Select(t=>t.Name).ToList().AsReadOnly(), entity.state);
         
@@ -140,11 +140,13 @@ public sealed class TaskRepository : ITaskRepository
             entity.Title = task.Title;
             entity.description = task.Description!;
             entity.state = task.State;
+            var tagList = new List<Tag>();
             foreach (string s in task.Tags){
                 if((from t in _context.Tags where t.Name== s select t).FirstOrDefault()!= null){
-                    entity.Tags.Add((from t in _context.Tags where t.Name== s select t).FirstOrDefault()!);
+                    tagList.Add((from t in _context.Tags where t.Name== s select t).FirstOrDefault()!);
                 }
             }
+            entity.Tags = tagList;
             entity.StateUpdated = DateTime.UtcNow;
             if((from u in _context.Users where u.Id == task.AssignedToId select u).FirstOrDefault()==null){
                 response = Response.BadRequest;
