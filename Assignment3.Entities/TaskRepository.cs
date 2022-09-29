@@ -26,7 +26,9 @@ public sealed class TaskRepository : ITaskRepository
             entity.description = task.Description;
             entity.state = State.New;
             foreach (string s in task.Tags){
-                entity.Tags.Add((from t in _context.Tags where t.Name== s select t).FirstOrDefault());
+                if((from t in _context.Tags where t.Name== s select t).FirstOrDefault()!= null){
+                    entity.Tags.Add((from t in _context.Tags where t.Name== s select t).FirstOrDefault());
+                }
             }
             entity.Created = DateTime.UtcNow;
             entity.StateUpdated = DateTime.UtcNow;
@@ -145,7 +147,9 @@ public sealed class TaskRepository : ITaskRepository
             entity.description = task.Description;
             entity.state = task.State;
             foreach (string s in task.Tags){
-                entity.Tags.Add((from t in _context.Tags where t.Name== s select t).FirstOrDefault());
+                if((from t in _context.Tags where t.Name== s select t).FirstOrDefault()!= null){
+                    entity.Tags.Add((from t in _context.Tags where t.Name== s select t).FirstOrDefault());
+                }
             }
             entity.StateUpdated = DateTime.UtcNow;
 
