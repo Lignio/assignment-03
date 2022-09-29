@@ -11,7 +11,6 @@ public sealed class UserRepository : IUserRepository
     }
 
     public (Response Response, int UserId) Create(UserCreateDTO user) {
-        //var entity = _context.Users.FirstOrDefault(u => u.Name == user.Name && u.Email == user.Email);
         var entity = _context.Users.FirstOrDefault(u => u.Email == user.Email);
         Response response;
 
@@ -56,6 +55,7 @@ public sealed class UserRepository : IUserRepository
             return null!;
         }
     }
+    
     public Response Update(UserUpdateDTO user){
         var entity = _context.Users.Find(user.Id);
         Response response;
@@ -64,13 +64,14 @@ public sealed class UserRepository : IUserRepository
         {
             response = Response.NotFound;
         }
-        else if (_context.Users.FirstOrDefault(c => c.Id != user.Id && c.Name == user.Name) != null)
+        else if (_context.Users.FirstOrDefault(c => c.Id != user.Id && c.Email == user.Email) != null)
         {
             response = Response.Conflict;
         }
         else
         {
             entity.Name = user.Name;
+            entity.Email = user.Email;
             _context.SaveChanges();
             response = Response.Updated;
         }
@@ -78,7 +79,6 @@ public sealed class UserRepository : IUserRepository
         return response;
     }
     public Response Delete(int userId, bool force = false){
-        //var user = _context.Users.Include(u => u.Users).FirstOrDefault(u => u.Id == userId);
         var user = _context.Users.FirstOrDefault(u => u.Id == userId);
         Response response;
 

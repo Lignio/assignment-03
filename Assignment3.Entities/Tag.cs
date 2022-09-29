@@ -7,7 +7,7 @@ public class Tag
     
     [StringLength(50)]
     [Required]
-    public String Name {get; set;}
+    public String Name {get; set;} = null!;
 
     public virtual ICollection<Task> Tasks {get; set;}
 }

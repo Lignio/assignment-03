@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Assignment3.Core;
 
 namespace Assignment3.Entities;
 
@@ -8,16 +9,20 @@ public class Task
 
     [Required]
     [StringLength(50)]
-    public string Title {get; set;} 
+    public string Title {get; set;} = null!;
 
-    public User AssignedTo {get; set;} 
+    public User AssignedTo {get; set;} = null!;
 
     [StringLength(100)]
-    public string description {get; set;}
+    public string description {get; set;} = null!;
 
     [Required]
     public State state{get; set;}
-    public IEnumerable<Tag> Tags;
+    public ICollection<Tag> Tags {get; set;} = null!;
+
+    public DateTime Created {get; set;} 
+
+    public DateTime StateUpdated {get; set;}
+
 }
 
-public enum State {New, Active, Resolved, Closed, Removed}
