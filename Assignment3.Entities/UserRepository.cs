@@ -11,7 +11,6 @@ public sealed class UserRepository : IUserRepository
     }
 
     public (Response Response, int UserId) Create(UserCreateDTO user) {
-        //var entity = _context.Users.FirstOrDefault(u => u.Name == user.Name && u.Email == user.Email);
         var entity = _context.Users.FirstOrDefault(u => u.Email == user.Email);
         Response response;
 
