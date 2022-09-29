@@ -91,5 +91,12 @@ public class TaskRepositoryTests
     }
 
     [Fact]
-    public void Updating_State_Of_Task
+    public void Updating_State_Of_Task_Will_Change_Current_Time() 
+    {
+        var tag1 = new Tag() { Id = 1, Name = "Tag1" };
+        var response = _repository.Update(new TaskUpdateDTO("Procrastinating", 1, "Doing everything and nothing", tag1));
+        var actual = DateTime.UtcNow.AddSeconds(2);
+
+        actual.Should().BeCloseTo(expected, precision: TimeSpan.FromSeconds(5));
+    }
 }
