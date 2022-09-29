@@ -80,7 +80,6 @@ public sealed class UserRepository : IUserRepository
         return response;
     }
     public Response Delete(int userId, bool force = false){
-        //var user = _context.Users.Include(u => u.Users).FirstOrDefault(u => u.Id == userId);
         var user = _context.Users.FirstOrDefault(u => u.Id == userId);
         Response response;
 
