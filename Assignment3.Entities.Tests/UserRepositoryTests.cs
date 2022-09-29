@@ -60,7 +60,6 @@ public sealed class UserRepositoryTests : IDisposable
     [Fact]
     public void Update_given_non_existing_User_returns_NotFound() => _repository.Update(new UserUpdateDTO(42, "Andyboii", "lafu@4life")).Should().Be(Response.NotFound);
 
-    //Fix when method has been altered
     [Fact]
     public void Update_given_existing_Email_returns_Conflict_and_does_not_update()
     {
