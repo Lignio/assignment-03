@@ -8,7 +8,6 @@ public class TaskRepositoryTests
 {   
     private readonly KanbanContext _context;
     private readonly TaskRepository _repository;
-    private readonly TagRepository _tagRepository;
 
     public TaskRepositoryTests()
     {
