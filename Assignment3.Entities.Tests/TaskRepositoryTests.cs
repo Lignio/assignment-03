@@ -87,8 +87,7 @@ public class TaskRepositoryTests
     {
         string[] collect = new string[1]{tag1.Name};
         var task = _repository.Create(new TaskCreateDTO("Procrastinating", 1, "Doing everything and nothing", collect));
-        task.TaskId = 2;
-        var entity = _context.Tasks.Find(2);
+        var entity = _context.Tasks.Find(1);
         entity.state.Should().Be(State.New);
     }
 
@@ -98,12 +97,12 @@ public class TaskRepositoryTests
         string[] collect = new string[1]{tag1.Name};
         var (response, created) = _repository.Create(new TaskCreateDTO("Procrastinating", 1, "Doing everything and nothing", collect));
         response.Should().Be(Response.Created);
-        created.Should().Be(1);
+        created.Should().Be(0);
 
-        var task = _repository.Create(new TaskCreateDTO("Procrastinating", 1, "Doing everything and nothing", collect));
+        /*var task = _repository.Create(new TaskCreateDTO("Procrastinating", 1, "Doing everything and nothing", collect));
         task.TaskId = 2;
         var entity = _context.Tasks.Find(2);
-        entity.state.Should().Be(State.New);
+        entity.state.Should().Be(State.New);*/
     }
 
     
@@ -119,8 +118,8 @@ public class TaskRepositoryTests
 
     [Fact]
     public void Assigning_User_Which_Does_Not_Exist_Returns_BadRequest() 
-    {
-        var response = _repository.Update(new TaskUpdateDTO(1, "Procrastinating", 2, "Doing everything and nothing", tag1, State.Active));
+    {   string[] collect = new string[1]{tag1.Name};
+        var response = _repository.Update(new TaskUpdateDTO(1, "Procrastinating", 5, "Doing everything and nothing", collect, State.Active));
         response.Should().Be(Response.BadRequest);
     }
 }
