@@ -98,7 +98,7 @@ public class TaskRepositoryTests
     {
         
         var task = _repository.Create(new TaskCreateDTO("Procrastinating", 1, "Doing everything and nothing", new List<string>{"Test"}));
-        var entity = _context.Tasks.Find(1);
+        var entity = _context.Tasks.Find(2);
         var expected = DateTime.UtcNow;
         entity.Created.Should().BeCloseTo(expected, precision: TimeSpan.FromSeconds(5));
     
@@ -146,4 +146,5 @@ public class TaskRepositoryTests
         var response = _repository.Update(new TaskUpdateDTO(1, "Procrastinating", 5, "Doing everything and nothing", collect, State.Active));
         response.Should().Be(Response.BadRequest);
     }
+
 }

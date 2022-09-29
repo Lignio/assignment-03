@@ -20,7 +20,7 @@ public class Task
     public State state{get; set;}
     public ICollection<Tag> Tags {get; set;} = null!;
 
-    public DateTime Created {get => DateTime.UtcNow;} 
+    public DateTime Created {get; set;}
 
     public DateTime StateUpdated {get; set;}
 

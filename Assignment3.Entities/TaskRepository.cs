@@ -17,7 +17,7 @@ public sealed class TaskRepository : ITaskRepository
 
         
           var entity = new Task();
-            //entity.Created = DateTime.UtcNow;
+            entity.Created = DateTime.UtcNow;
             entity.Title = task.Title;
             entity.description = task.Description;
             entity.state = State.New;
