@@ -20,9 +20,9 @@ public class TaskRepositoryTests
         var context = new KanbanContext(options.Options);
         context.Database.EnsureCreated();
         var user1 = new User("Oliver", "OllesEmail.dk") { Id = 1 };
-        context.Tasks.Add(new Task() {AssignedTo = user1, Title = "Do stuff", description = "...", state = State.New, Id = 1});
-        context.Tags.Add(new Tag{Id=1, Name="Test"});
-        context.Tags.Add(new Tag{Id=2, Name="Test2"});
+        context.Tasks.Add(new Task() {AssignedTo = user1, Title = "Do stuff", description = "...", state = State.New, Id = 1, Created = DateTime.UtcNow, Tags = new List<Tag>{new Tag{Id=1, Name="Test"},new Tag{Id=2, Name="Test2"}}});
+        //context.Tags.Add(new Tag{Id=1, Name="Test"});
+        //context.Tags.Add(new Tag{Id=2, Name="Test2"});
         context.SaveChanges();
 
         _context = context;
@@ -146,5 +146,12 @@ public class TaskRepositoryTests
         var response = _repository.Update(new TaskUpdateDTO(1, "Procrastinating", 5, "Doing everything and nothing", collect, State.Active));
         response.Should().Be(Response.BadRequest);
     }
+
+
+    [Fact]
+    public void Find_task_with_non_existing_id_returns_null() => _repository.Read(3).Should().BeNull();
+
+    [Fact]
+    public void ReadAll_returns_all_Tasks() => _repository.ReadAll().Should().BeEquivalentTo(new[] { new TaskDTO(1, "Do stuff", "Oliver", new List<string>{"Test", "Test2"}, State.New)});
 
 }
